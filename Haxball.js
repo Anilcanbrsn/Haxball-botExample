@@ -1,7 +1,7 @@
 var room = HBInit({
     roomName: "🏆THİAGO ACEMİ FUTSAL ODASI🏆",
-    playerName: "Legend Bot",
-    maxPlayers: 12,
+    playerName: "Thiago Bot",
+    maxPlayers: 16,
     public: true,
     noPlayer: true, // Remove host player (recommended!)
     geo : {code: 'tr',
