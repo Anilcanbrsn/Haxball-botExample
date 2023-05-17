@@ -7,7 +7,7 @@ var room = HBInit({
 
 room.setTeamsLock(true);
 
-let maxoyuncu = 1;
+let maxoyuncu = 4;
 
 function takim() {
     red = room.getPlayerList().filter((player)=>player.team==1);
