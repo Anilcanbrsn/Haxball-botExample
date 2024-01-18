@@ -1,0 +1,72 @@
+const game = {
+    "yazi": "yazı",
+    "tura": "tura"
+}
+
+const players = [];
+
+room.onPlayerJoin = (player) => {
+    const kayitliOyuncu = players.find((o) => o.auth === player.auth);
+
+    if (kayitliOyuncu) {
+        kayitliOyuncu.id = player.id;
+        kayitliOyuncu.name = player.name;
+    } else {
+        players.push({
+            "id": player.id,
+            "name": player.name,
+            "auth": player.auth,
+            "bakiye": 100 // Set an initial balance, adjust as needed
+        });
+    }
+    console.log(players);
+};
+
+room.onPlayerChat = (player, message) => {
+    const args = message.split(' ');
+
+    if (args[0] === '!game' && args.length === 3 && (args[1].toLowerCase() === 'yazi' || args[1].toLowerCase() === 'tura')) {
+        // Correctly formatted !game command
+        const chosenGame = args[1].toLowerCase();
+        const betAmount = parseInt(args[2]);
+
+        const currentPlayer = players.find((p) => p.id === player.id);
+
+        if (!isNaN(betAmount) && betAmount > 0 && betAmount <= currentPlayer.bakiye) {
+            const result = Math.random() < 0.5 ? game.yazi : game.tura;
+
+            room.sendAnnouncement(`🎲 ${player.name}, bahisiniz alındı. Bekleyin...`, null, 0x00FF00, 'bold');
+
+            setTimeout(() => {
+                if (chosenGame === result.toLowerCase()) {
+                    currentPlayer.bakiye += betAmount;
+                    room.sendAnnouncement(`🎉 ${player.name} ${chosenGame} için ${betAmount} miktarında bahis yaptı ve kazandı! Yeni bakiye: ${currentPlayer.bakiye} 💰`, null, 0x00FF00, 'bold');
+                } else {
+                    currentPlayer.bakiye -= betAmount;
+                    room.sendAnnouncement(`😢 ${player.name} ${chosenGame} için ${betAmount} miktarında bahis yaptı ve kaybetti. Yeni bakiye: ${currentPlayer.bakiye} 💸`, null, 0xFF0000, 'bold');
+                }
+            }, 3000);
+            return false;
+        } else {
+            room.sendAnnouncement(`❌ Geçersiz bahis! Bahis miktarı geçerli bir pozitif sayı olmalı ve bakiyenizden büyük olamaz.`, player.id, 0xFF0000, 'bold');
+            return false;
+        }
+    } else if (args[0] === '!game') {
+        // Incorrectly formatted !game command
+        room.sendAnnouncement("❓ Bahis oynamak için: !game [yazi/Tura] [BahisMiktarı]", player.id, 0x00FF00, 'bold');
+        return false;
+    } else if (args[0] === '!bakiye') {
+        // !bakiye command to check own balance
+        const currentPlayer = players.find((p) => p.id === player.id);
+        if (currentPlayer) {
+            room.sendAnnouncement(`💰 ${player.name}, bakiyeniz: ${currentPlayer.bakiye}`, player.id, 0x00FF00, 'bold');
+            return false;
+        }
+    } else if (args[0] === '!game-top') {
+        // !game-top command to display ranking
+        const ranking = players.sort((a, b) => b.bakiye - a.bakiye);
+        const currentPlayerIndex = ranking.findIndex((p) => p.id === player.id);
+        room.sendAnnouncement(`🏆 ${player.name}, sıralama: ${currentPlayerIndex + 1}/${ranking.length}`, player.id, 0x00FF00, 'bold');
+        return false;
+    }
+};
