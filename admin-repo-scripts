@@ -1,0 +1,43 @@
+// GitHub reposundan admin listesini çekme
+function fetchAdminList() {
+    return fetch('https://raw.githubusercontent.com/Anilcanbrsn/Haxball-botExample/main/adminler.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('GitHub\'dan veri alınamadı');
+            }
+            return response.json(); // JSON formatında veriyi direkt olarak dönüştürüyoruz
+        })
+        .then(admins => {
+            return admins;
+        })
+        .catch(error => {
+            console.error('Hata:', error);
+            return null;
+        });
+}
+
+// Haxball botunun oluşturulması
+var room = HBInit({
+    roomName: "My room",
+    maxPlayers: 16,
+    noPlayer: true // Host oyuncuyu kaldırır (tavsiye edilir)
+});
+
+// Oyuncu giriş yaptığında kontrol edilecek fonksiyon
+room.onPlayerJoin = function onPlayerJoin(player) {
+    fetchAdminList().then(adminList => {
+        if (!adminList) {
+            console.log('Admin listesi alınamadı');
+            return;
+        }
+
+        // Gelen oyuncu ismini kontrol et
+        if (adminList.includes(player.auth)) {
+            console.log(`${player.name} admin olarak tanımlandı`);
+            room.setPlayerAdmin(player.id, true);
+        } else {
+            console.log(`${player.name} admin değil`);
+            // Admin değilse yapılacak işlemler buraya yazılabilir
+        }
+    });
+};
