@@ -1,5 +1,19 @@
 [
-    "UIdE4G_Z1BxAycNUu9KIvnySVHx77anI7Mdo_6zoHRc",
-    "admin2",
-    "admin3"
+    {
+        "english": "serendipity",
+        "turkish": "tesadüf"
+    },
+    {
+        "english": "ephemeral",
+        "turkish": "kısa ömürlü"
+    },
+    {
+        "english": "quintessential",
+        "turkish": "en tipik"
+    },
+    {
+        "english": "ineffable",
+        "turkish": "anlatılamaz"
+    }
+    // Daha fazla kelime ekleyebilirsiniz
 ]
